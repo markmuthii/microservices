@@ -10,17 +10,20 @@ import {
 import {
   signInValidation,
   signupValidation,
-} from "../../middleware/validation";
+  validateRequestMiddleware,
+} from "../../middleware/validate-request";
+import { currentUserMiddleware } from "../../middleware/current-user";
+import { requireAuthMiddleware } from "../../middleware/require-auth";
 
 const router = express.Router();
 
-router.post("/signup", signupValidation, signup);
+router.post("/signup", signupValidation, validateRequestMiddleware, signup);
 
-router.post("/signin", signInValidation, signin);
+router.post("/signin", signInValidation, validateRequestMiddleware, signin);
 
 router.get("/currentuser", currentUser);
 
-router.get("/", getAllUsers);
+router.get("/", currentUserMiddleware, requireAuthMiddleware, getAllUsers);
 
 router.post("/signout", signout);
 

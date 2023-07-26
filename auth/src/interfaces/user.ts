@@ -10,3 +10,8 @@ export interface IUserDocument extends IUser, Document {}
 export interface IUserModel extends Model<IUserDocument> {
   build(args: IUser): IUserDocument;
 }
+
+export interface IUserPayload {
+  id: string;
+  email: string;
+}
