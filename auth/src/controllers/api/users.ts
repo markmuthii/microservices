@@ -17,6 +17,7 @@ export async function signup(req: Request, res: Response) {
   let user = User.build({
     email,
     password,
+    status: 1,
   });
 
   await user.save();
@@ -32,14 +33,6 @@ export async function signup(req: Request, res: Response) {
   req.session = {
     jwt: userJWT,
   };
-
-  // This is not necessary after adding the toJSON in the User schema
-  // const userData = (({ id, password, email }) => ({ id, email }))(user);
-
-  // This could be a way to destructure the user object,
-  // but it includes metadata from mongo,
-  // so we are sticking to the above
-  // const { __v, ...userData } = user;
 
   res.status(201).send({ success: true, user });
 }
@@ -58,6 +51,7 @@ export async function signin(req: Request, res: Response) {
     {
       id: user.id,
       email: user.email,
+      status: user.status,
     },
     process.env.JWT_KEY!
   );

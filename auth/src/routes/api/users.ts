@@ -21,7 +21,7 @@ router.post("/signup", signupValidation, validateRequestMiddleware, signup);
 
 router.post("/signin", signInValidation, validateRequestMiddleware, signin);
 
-router.get("/currentuser", currentUser);
+router.get("/currentuser", currentUserMiddleware, currentUser);
 
 router.get("/", currentUserMiddleware, requireAuthMiddleware, getAllUsers);
 

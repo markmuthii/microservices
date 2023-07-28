@@ -39,7 +39,9 @@ export function currentUserMiddleware(
 
     // If it is valid, set the contents within the request object as currentUser
     req.currentUser = payload;
-  } catch (err) {}
+  } catch (err) {
+    console.error("Error verifying the JWT", err);
+  }
 
   // Carry on
   next();
