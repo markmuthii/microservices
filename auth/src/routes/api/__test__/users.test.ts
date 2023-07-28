@@ -109,8 +109,66 @@ describe("Signin", () => {
   });
 });
 
-describe("Current User", () => {});
+describe("Current User", () => {
+  test("Returns 401 and currentUser null if user is not authenticated", async () => {
+    const response = await request(app)
+      .get("/api/users/currentuser")
+      .send()
+      .expect(401);
 
-describe("All Users", () => {});
+    expect(response.body.currentUser).toBeNull();
+  });
 
-describe("Signout", () => {});
+  test("Returns details of current user", async () => {
+    const cookie = await global.signup();
+
+    const response = await request(app)
+      .get("/api/users/currentuser")
+      .set("Cookie", cookie)
+      .send()
+      .expect(200);
+
+    expect(response.body.currentUser.email).toEqual("test@test.com");
+  });
+});
+
+describe("All Users", () => {
+  const url = "/api/users";
+
+  test("Returns 401 if not authenticated", async () => {
+    await request(app).get(url).send().expect(401);
+  });
+
+  test("Returns an array of all users if authenticated", async () => {
+    const cookie = await global.signup();
+
+    const response = await request(app)
+      .get(url)
+      .set("Cookie", cookie)
+      .send()
+      .expect(200);
+
+    expect(response.body[0].email).toEqual("test@test.com");
+  });
+});
+
+describe("Signout", () => {
+  test("Clears the cookie after successful signout", async () => {
+    await request(app)
+      .post("/api/users/signup")
+      .send({
+        email: "test@test.com",
+        password: "password",
+      })
+      .expect(201);
+
+    const response = await request(app)
+      .post("/api/users/signout")
+      .send({})
+      .expect(205);
+
+    expect(response.get("Set-Cookie")[0]).toEqual(
+      "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly"
+    );
+  });
+});
